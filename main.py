@@ -128,7 +128,7 @@ if include_btc_cost == "y":
             needed_upgrades = list(range(current_btc_level + 1, desired_btc_level + 1))
     else:
         desired_btc_level = 3
-    if current_btc_level >= 2 and desired_btc_level == 3:
+    if current_btc_level <= 2 and desired_btc_level == 3:
         print("Include solar power build costs in calculation? (y or n) (Required for Bitcoin Farm Level 3)")
         solar = input("--> ")
         if solar.lower().strip() == 'y':
