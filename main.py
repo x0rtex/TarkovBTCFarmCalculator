@@ -21,7 +21,7 @@ def price_check_failed(name):
             if price > 0:
                 break
             else:
-                print(f"{price} is not a number over 0, try again.")
+                print(f"'{price}' is not a number over 0, try again.")
         except ValueError:
             print(f"'{price}' is not a whole number, try again.")
     return price
@@ -35,20 +35,19 @@ def flea_price_check(result_name, position, name):
         price_check_failed(name)
 
 
-print("Include fuel costs in calculation? (y or n)")
+print("\nInclude fuel costs in calculation? (y or n)")
 use_fuel = input("--> ")
 use_fuel = use_fuel.lower().strip()
-hours_per_fuel = 21.0525  # This is the base amount of time one fuel tank lasts in the generator
+hours_per_fuel = 21.0525  # This is the base amount of time one metal fuel tank lasts in the generator
 
 if use_fuel == "y":
-    # Double fuel time if solar power is unlocked
-    print("Solar power? (y or n) (Build costs not included)")
+    print("\nCalculate solar power -50% fuel consumption? (y or n)")
     solar = input("--> ")
     if solar.lower().strip() == 'y':
         hours_per_fuel *= 2
 
     # Calculate fuel time increase based on hideout management skill
-    print("Hideout management level? (1 - 51)")
+    print("\nHideout management level? (1 - 51)")
     while True:
         hm_level = input("--> ")
         try:
@@ -57,9 +56,9 @@ if use_fuel == "y":
                 hm_fuel_multiplier = 1 + (0.01 * (hm_level * 0.5))
                 break
             else:
-                print(f"{hm_level} is not a number between 1 and 51")
+                print(f"'{hm_level}' is not a number between 1 and 51")
         except ValueError:
-            print(f"{hm_level} is not a whole number, try again")
+            print(f"'{hm_level}' is not a whole number, try again")
 
     # Adding fuel increase percentage to fuel hours
     if hm_fuel_multiplier != 0:
@@ -89,15 +88,16 @@ if use_fuel == "y":
 else:
     fuel_price = 0
 
-print("Include cost of building/upgrading bitcoin farm? (y or n)")
+print("\nInclude cost of building/upgrading bitcoin farm? (y or n)")
 include_btc_cost = input("--> ")
 include_btc_cost = include_btc_cost.lower().strip()
 
-needed_upgrades = [69, 420]  # These numbers aren't important, they're just not 0 - 3, IDK what to do lol
+needed_upgrades = [69, 420]  # These numbers simply have to be not 0 - 3, IDK what to do lol
 solar_required = False
 desired_btc_level = 0
+cpu_fan = "CPU Fan"
 if include_btc_cost == "y":
-    print("Enter current bitcoin farm level (0 - 3)")
+    print("\nEnter current bitcoin farm level (0 to 3)")
     while True:
         current_btc_level = input("--> ")
         try:
@@ -105,12 +105,12 @@ if include_btc_cost == "y":
             if 0 <= current_btc_level <= 3:
                 break
             else:
-                print(f"{current_btc_level} is not a number between 0 and 3, try again.")
+                print(f"'{current_btc_level}' is not a number between 0 and 3, try again.")
         except ValueError:
             print(f"'{current_btc_level}' is not a whole number, try again.")
 
     if current_btc_level < 3:
-        print("Enter desired bitcoin farm level (blank = no upgrade)")
+        print(f"\nEnter desired bitcoin farm level ({current_btc_level + 1} to 3) (blank = no upgrade)")
         while True:
             desired_btc_level = input("--> ")
             if desired_btc_level:
@@ -119,9 +119,9 @@ if include_btc_cost == "y":
                     if current_btc_level <= desired_btc_level <= 3:
                         break
                     else:
-                        print(f"{current_btc_level} is invalid, try again.")
+                        print(f"'{desired_btc_level}' is invalid, try again.")
                 except ValueError:
-                    print(f"'{current_btc_level}' is not a whole number, try again.")
+                    print(f"'{desired_btc_level}' is not a whole number, try again.")
             else:
                 desired_btc_level = current_btc_level
         if desired_btc_level != current_btc_level:
@@ -129,7 +129,7 @@ if include_btc_cost == "y":
     else:
         desired_btc_level = 3
     if current_btc_level <= 2 and desired_btc_level == 3:
-        print("Include solar power build costs in calculation? (y or n) (Required for Bitcoin Farm Level 3)")
+        print("\nInclude solar power build costs in calculation? (y or n) (Required for Bitcoin Farm Level 3)")
         solar = input("--> ")
         if solar.lower().strip() == 'y':
             solar_required = True
@@ -151,7 +151,8 @@ try:
 except KeyError:
     btc_price = price_check_failed("BTC")
 
-print(f"₽ {btc_price} - Bitcoin sell price")
+print("\n--- Main Prices ---")
+print(f"₽ {btc_price:,} - Bitcoin")
 
 # Define the 24-hour price of Graphics Cards on the flea market
 gpu_query = """
@@ -168,14 +169,15 @@ try:
 except KeyError:
     gpu_price = price_check_failed("Graphics card")
 
-print(f"₽ {gpu_price} - Graphics Card 24h Price")
+print(f"₽ {gpu_price:,} - Graphics Card")
 
 if use_fuel == "y":
-    print(f"₽ {fuel_price} - Metal Fuel Tank Price")
-    print(f"{round(hours_per_fuel, 2)} hours per Metal Fuel Tank\n")
+    print(f"₽ {fuel_price:,} - Metal Fuel Tank")
+    print(f"{round(hours_per_fuel, 2)} per Metal Fuel Tank")
 
 if include_btc_cost == "y":
     total_btc_build_price = 0
+
     if 1 in needed_upgrades:
         btc1_query = """
         {
@@ -188,7 +190,7 @@ if include_btc_cost == "y":
 
         btc1_result = run_query(btc1_query)
 
-        cpu_fan_price = (flea_price_check(btc1_result, 0, "CPU fan") * 15)
+        cpu_fan_price = (flea_price_check(btc1_result, 0, cpu_fan) * 15)
         psu_price = (flea_price_check(btc1_result, 1, "Power supply unit") * 10)
         t_plug_price = (flea_price_check(btc1_result, 2, "T-Shaped plug") * 5)
         power_cord_price = (flea_price_check(btc1_result, 3, "Power cord") * 10)
@@ -198,13 +200,15 @@ if include_btc_cost == "y":
 
         total_btc_build_price += btc1_build_price
 
-        print(f"₽ {cpu_fan_price} - 15x CPU fan")
-        print(f"₽ {psu_price} - 10x Power supply unit")
-        print(f"₽ {t_plug_price} - 5x T-Shaped plug")
-        print(f"₽ {power_cord_price} - 10x Power cord")
-        print(f"₽ {vpx_price} - 1x VPX Flash Storage Module")
+        print("\n--- Bitcoin Farm Level 1 ---")
+        print(f"₽ {cpu_fan_price:,} - 15x CPU fan")
+        print(f"₽ {psu_price:,} - 10x Power supply unit")
+        print(f"₽ {t_plug_price:,} - 5x T-Shaped plug")
+        print(f"₽ {power_cord_price:,} - 10x Power cord")
+        print(f"₽ {vpx_price:,} - 1x VPX Flash Storage Module")
 
-        print(f"₽ {btc1_build_price} - Total cost of Bitcoin Farm Level 1\n")
+        print(f"₽ {btc1_build_price:,} - Total cost of Bitcoin Farm Level 1")
+
     if 2 in needed_upgrades:
         btc2_query = """
         {
@@ -218,7 +222,7 @@ if include_btc_cost == "y":
 
         btc2_result = run_query(btc2_query)
 
-        cpu_fan_price = flea_price_check(btc2_result, 0, "CPU fan") * 15
+        cpu_fan_price = flea_price_check(btc2_result, 0, cpu_fan) * 15
         psu_price = flea_price_check(btc2_result, 1, "Power supply unit") * 10
         pcb_price = flea_price_check(btc2_result, 2, "Printed circuit board") * 15
         power_filter_price = flea_price_check(btc2_result, 3, "Military power filter") * 2
@@ -228,13 +232,14 @@ if include_btc_cost == "y":
 
         total_btc_build_price += btc2_build_price
 
-        print(f"₽ {cpu_fan_price} - 15x CPU fan")
-        print(f"₽ {psu_price} - 10x Power supply unit")
-        print(f"₽ {pcb_price} - 15x Printed circuit board")
-        print(f"₽ {power_filter_price} - 2x Military power filter")
-        print(f"₽ {relay_price} - 5x Phase control relay")
+        print("\n--- Bitcoin Farm Level 2 ---")
+        print(f"₽ {cpu_fan_price:,} - 15x CPU fan")
+        print(f"₽ {psu_price:,} - 10x Power supply unit")
+        print(f"₽ {pcb_price:,} - 15x Printed circuit board")
+        print(f"₽ {power_filter_price:,} - 2x Military power filter")
+        print(f"₽ {relay_price:,} - 5x Phase control relay")
 
-        print(f"₽ {btc2_build_price} - Total cost of Bitcoin Farm Level 2\n")
+        print(f"₽ {btc2_build_price:,} - Total cost of Bitcoin Farm Level 2")
 
     if 3 in needed_upgrades:
         btc3_query = """
@@ -249,7 +254,7 @@ if include_btc_cost == "y":
 
         btc3_result = run_query(btc3_query)
 
-        cpu_fan_price = (flea_price_check(btc3_result, 0, "CPU fan") * 25)
+        cpu_fan_price = (flea_price_check(btc3_result, 0, cpu_fan) * 25)
         battery_price = flea_price_check(btc3_result, 1, "6-STEN-140-M military battery")
         motor_price = (flea_price_check(btc3_result, 2, "Electric motor") * 10)
         gauge_price = (flea_price_check(btc3_result, 3, "Pressure gauge") * 10)
@@ -257,11 +262,12 @@ if include_btc_cost == "y":
 
         btc3_build_price = cpu_fan_price + battery_price + motor_price + gauge_price + tube_price
 
-        print(f"₽ {cpu_fan_price} - 25x CPU fan")
-        print(f"₽ {battery_price} - 1x 6-STEN-140-M military battery")
-        print(f"₽ {motor_price} - 10x Electric motor")
-        print(f"₽ {gauge_price} - 10x Pressure gauge")
-        print(f"₽ {tube_price} - 15x Silicon tube")
+        print("\n--- Bitcoin Farm Level 3 ---")
+        print(f"₽ {cpu_fan_price:,} - 25x CPU fan")
+        print(f"₽ {battery_price:,} - 1x 6-STEN-140-M military battery")
+        print(f"₽ {motor_price:,} - 10x Electric motor")
+        print(f"₽ {gauge_price:,} - 10x Pressure gauge")
+        print(f"₽ {tube_price:,} - 15x Silicon tube")
 
         if solar_required:
             solar_query = """
@@ -281,27 +287,28 @@ if include_btc_cost == "y":
             power_filter_price = (flea_price_check(solar_result, 0, "Military Power Filter") * 10)
             euros_price = (120 * 75000)
 
-            solar_build_price = phased_array_price + working_lcd_price + military_cable_price + power_filter_price + \
-                                euros_price
+            solar_build_price = phased_array_price + working_lcd_price + military_cable_price + power_filter_price + euros_price
 
-            print(f"Solar Power\n₽ {phased_array_price} - 4x Phased array element")
-            print(f"₽ {working_lcd_price} - 3x Working LCD")
-            print(f"₽ {military_cable_price} - 10x Military cable")
-            print(f"₽ {power_filter_price} - 10x Military Power Filter")
-            print(f"₽ {euros_price} - 75000x Euros")
+            print("\n--- Solar Power ---")
+            print(f"₽ {phased_array_price:,} - 4x Phased array element")
+            print(f"₽ {working_lcd_price:,} - 3x Working LCD")
+            print(f"₽ {military_cable_price:,} - 10x Military cable")
+            print(f"₽ {power_filter_price:,} - 10x Military Power Filter")
+            print(f"₽ {euros_price:,} - 75000x Euros")
 
             btc3_build_price += solar_build_price
 
         total_btc_build_price += btc3_build_price
 
-        print(f"₽ {btc3_build_price} - Total cost of Bitcoin Farm Level 3\n")
+        print(f"₽ {btc3_build_price:,} - Total cost of Bitcoin Farm Level 3")
 
-    print(f"₽ {total_btc_build_price} - Total cost of upgrading Bitcoin Farm\n")
+    print("\n--- Bitcoin Farm Total ---")
+    print(f"₽ {total_btc_build_price:,} - Total cost of upgrading Bitcoin Farm")
 else:
     total_btc_build_price = 0
 
 # Define currently owned GPUs
-print("Enter amount of GPUs currently owned (blank = 0)")
+print("\nEnter amount of GPUs currently owned (blank = 0)")
 while True:
     current_gpu = input("--> ")
     if current_gpu:
@@ -320,7 +327,7 @@ while True:
 # Define the amount of GPUs to be purchased
 desired_gpu = int(0)
 if current_gpu < 50:
-    print(f"Enter amount of (additional) GPUs to be purchased (blank = 0)")
+    print(f"\nEnter amount of (additional) GPUs to be purchased (blank = 0)")
     gpu_slots = 50
     while True:
         if include_btc_cost == "y":
@@ -340,17 +347,19 @@ if current_gpu < 50:
                 if 0 <= desired_gpu <= gpu_slots:
                     break
                 else:
-                    print(f"{desired_gpu} is not a number between 0 and {gpu_slots}, try again")
+                    print(f"'{desired_gpu}' is not a number between 0 and {gpu_slots}, try again")
             except ValueError:
                 print(f"'{desired_gpu}' is not a whole number, try again")
         else:
             desired_gpu = int(0)
             break
 
-# Tarkov wiki calculation
+# BTC farm calculation from wiki
 gpu_count = desired_gpu + current_gpu
 hour_per_btc = 145000 / (1 + (gpu_count - 1) * 0.041225) / 3600
-print(f"\n{round(hour_per_btc, 2)} hours to mine one BTC @ {btc_price:,} ₽")
+
+print("\n--- Timing ---")
+print(f"{round(hour_per_btc, 2)} hours to mine one BTC @ {btc_price:,} ₽")
 
 btc_per_hour = btc_price / hour_per_btc
 total_gpu_price = desired_gpu * gpu_price
@@ -364,8 +373,11 @@ if use_fuel == 'y':
 else:
     payback_hours = grand_total / btc_per_hour
 
-print(f"Cost of {desired_gpu} GPUs: {total_gpu_price} ₽")
-print(f"Cost of hideout upgrades: {total_btc_build_price} ₽")
+print("\n--- Sub Total ---")
+print(f"GPUs Total: {total_gpu_price:,} ₽")
+print(f"Bitcoin Farm Total: {total_btc_build_price:,} ₽")
+
+print("\n--- Grand Total ---")
 print(f"{round(payback_hours / 24, 2)} days to pay back {desired_gpu} GPUs and hideout items costing a total of {grand_total:,} ₽")
 if payback_hours < 0:
-    print("You are losing money!")
+    print("This number seems to be negative, you'll probably never make your money back.")
