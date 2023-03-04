@@ -92,9 +92,7 @@ print("\nInclude cost of building/upgrading bitcoin farm? (y or n)")
 include_btc_cost = input("--> ")
 include_btc_cost = include_btc_cost.lower().strip()
 
-needed_upgrades = [
-    69, 420
-]  # These numbers simply have to be not 0 - 3, IDK what to do lol
+needed_upgrades = []
 solar_required = False
 desired_btc_level = 0
 cpu_fan = "CPU Fan"
@@ -127,8 +125,7 @@ if include_btc_cost == "y":
             else:
                 desired_btc_level = current_btc_level
         if desired_btc_level != current_btc_level:
-            needed_upgrades = list(
-                range(current_btc_level + 1, desired_btc_level + 1))
+            needed_upgrades = list(range(current_btc_level + 1, desired_btc_level + 1))
     else:
         desired_btc_level = 3
     if current_btc_level <= 2 and desired_btc_level == 3:
@@ -150,8 +147,7 @@ btc_query = """
 
 try:
     btc_result = run_query(btc_query)
-    btc_price = btc_result['data']['itemsByName'][0]['sellFor'][0][
-        'price']  # 4 prices given, first one is therapist
+    btc_price = btc_result['data']['itemsByName'][0]['sellFor'][0]['price']  # 4 prices given, first one is therapist
 except KeyError:
     btc_price = price_check_failed("BTC")
 
@@ -177,7 +173,7 @@ print(f"₽ {gpu_price:,} - Graphics Card")
 
 if use_fuel == "y":
     print(f"₽ {fuel_price:,} - Metal Fuel Tank")
-    print(f"{round(hours_per_fuel, 2)} per Metal Fuel Tank")
+    print(f"{round(hours_per_fuel, 2)} hours per Metal Fuel Tank")
 
 if include_btc_cost == "y":
     total_btc_build_price = 0
@@ -310,8 +306,7 @@ if include_btc_cost == "y":
         total_btc_build_price += btc3_build_price
 
     print("\n--- Bitcoin Farm Total ---")
-    print(
-        f"₽ {total_btc_build_price:,} - Total cost of upgrading Bitcoin Farm")
+    print(f"₽ {total_btc_build_price:,} - Total cost of upgrading Bitcoin Farm")
 else:
     total_btc_build_price = 0
 
