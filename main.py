@@ -92,7 +92,9 @@ print("\nInclude cost of building/upgrading bitcoin farm? (y or n)")
 include_btc_cost = input("--> ")
 include_btc_cost = include_btc_cost.lower().strip()
 
-needed_upgrades = [69, 420]  # These numbers simply have to be not 0 - 3, IDK what to do lol
+needed_upgrades = [
+    69, 420
+]  # These numbers simply have to be not 0 - 3, IDK what to do lol
 solar_required = False
 desired_btc_level = 0
 cpu_fan = "CPU Fan"
@@ -125,7 +127,8 @@ if include_btc_cost == "y":
             else:
                 desired_btc_level = current_btc_level
         if desired_btc_level != current_btc_level:
-            needed_upgrades = list(range(current_btc_level + 1, desired_btc_level + 1))
+            needed_upgrades = list(
+                range(current_btc_level + 1, desired_btc_level + 1))
     else:
         desired_btc_level = 3
     if current_btc_level <= 2 and desired_btc_level == 3:
@@ -147,7 +150,8 @@ btc_query = """
 
 try:
     btc_result = run_query(btc_query)
-    btc_price = btc_result['data']['itemsByName'][0]['sellFor'][0]['price']  # 4 prices given, first one is therapist
+    btc_price = btc_result['data']['itemsByName'][0]['sellFor'][0][
+        'price']  # 4 prices given, first one is therapist
 except KeyError:
     btc_price = price_check_failed("BTC")
 
@@ -206,8 +210,7 @@ if include_btc_cost == "y":
         print(f"₽ {t_plug_price:,} - 5x T-Shaped plug")
         print(f"₽ {power_cord_price:,} - 10x Power cord")
         print(f"₽ {vpx_price:,} - 1x VPX Flash Storage Module")
-
-        print(f"₽ {btc1_build_price:,} - Total cost of Bitcoin Farm Level 1")
+        print(f"\n₽ {btc1_build_price:,} - Total cost of Bitcoin Farm Level 1")
 
     if 2 in needed_upgrades:
         btc2_query = """
@@ -239,7 +242,7 @@ if include_btc_cost == "y":
         print(f"₽ {power_filter_price:,} - 2x Military power filter")
         print(f"₽ {relay_price:,} - 5x Phase control relay")
 
-        print(f"₽ {btc2_build_price:,} - Total cost of Bitcoin Farm Level 2")
+        print(f"\n₽ {btc2_build_price:,} - Total cost of Bitcoin Farm Level 2")
 
     if 3 in needed_upgrades:
         btc3_query = """
@@ -269,6 +272,8 @@ if include_btc_cost == "y":
         print(f"₽ {gauge_price:,} - 10x Pressure gauge")
         print(f"₽ {tube_price:,} - 15x Silicon tube")
 
+        print(f"\n₽ {btc3_build_price:,} - Total cost of Bitcoin Farm Level 3")
+
         if solar_required:
             solar_query = """
                     {
@@ -296,14 +301,17 @@ if include_btc_cost == "y":
             print(f"₽ {power_filter_price:,} - 10x Military Power Filter")
             print(f"₽ {euros_price:,} - 75000x Euros")
 
+            print(f"\n₽ {solar_build_price:,} - Total cost of Solar Power")
+
             btc3_build_price += solar_build_price
+
+            print(f"\n₽ {btc3_build_price:,} - Total cost of Bitcoin Farm Level 3 + Solar Power")
 
         total_btc_build_price += btc3_build_price
 
-        print(f"₽ {btc3_build_price:,} - Total cost of Bitcoin Farm Level 3")
-
     print("\n--- Bitcoin Farm Total ---")
-    print(f"₽ {total_btc_build_price:,} - Total cost of upgrading Bitcoin Farm")
+    print(
+        f"₽ {total_btc_build_price:,} - Total cost of upgrading Bitcoin Farm")
 else:
     total_btc_build_price = 0
 
