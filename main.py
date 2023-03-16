@@ -14,7 +14,7 @@ def run_query(query):
 # This function is used to handle cases where the price of an item cannot be found in the Tarkov API.
 # It prints a message asking the user to manually enter a price, and then checks to make sure the input is a positive integer.
 # If the input is valid, it is returned.
-def price_check_failed(name):
+def price_check_failed(name) -> int:
     while True:
         print(f"{name} price check failed, please manually enter a value.")
         price = input("--> ")
